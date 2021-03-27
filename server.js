@@ -1,10 +1,9 @@
 // NPM Modules
-const fs = require("fs")
+const fs = require("fs");
 const express = require("express");
 const path = require("path");
 const app = express();
-const { v4: uuidv4 } = require('uuid');
-
+const { v4: uuidv4 } = require("uuid");
 
 // Port
 const PORT = process.env.PORT || 8080;
@@ -26,25 +25,24 @@ app.get("/notes", function (req, res) {
 });
 
 // API Routes
-app.get("/api/notes", async function(req, res){
-// create a variable that is an await function. function calls on our database to send us it's contents
-  let parsedNotes= 
-  await fs.promises.readFile("./db/db.json", "utf8", function (err, data){})
-// responds with the contents of our parsed database
-  res.json(JSON.parse(parsedNotes))
-})
+app.get("/api/notes", async function (req, res) {
+  // create a variable that is an await function. function calls on our database to send us it's contents
+  let parsedNotes = await fs.promises.readFile("./db/db.json", "utf8");
+  // responds with the contents of our parsed database
+  res.json(JSON.parse(parsedNotes));
+});
 
+app.post("/api/notes", function (req, res) {
+  const newNote = req.body;
+  newNote.id = uuidv4();
 
+  // create a note from req.body
+});
 
-app.post("/api/notes", function(req, res){
-    // create a note from req.body
-})
-
-app.delete("/api/notes:id", function(req, res){
-    // Delete a note based off id
-    const { id } = req.params;
-    
-})
+app.delete("/api/notes:id", function (req, res) {
+  // Delete a note based off id
+  const { id } = req.params;
+});
 
 // Listener
 app.listen(PORT, () => console.log("App listening on port " + PORT));
