@@ -2,11 +2,20 @@
 const fs = require("fs");
 const express = require("express");
 const path = require("path");
-const app = express();
 const { v4: uuidv4 } = require("uuid");
+
+// creates an express server
+const app = express();
 
 // Port
 const PORT = process.env.PORT || 8080;
+
+// creates a global variable for reading our db
+// async function, waits until we read our DB file, then parses it.
+let notes = (async function () {
+  const data = await fs.promises.readFile("./db/db.json", "utf8");
+  notes = JSON.parse(data);
+})();
 
 // Middleware Functions
 app.use(express.urlencoded({ extended: true }));
@@ -26,17 +35,24 @@ app.get("/notes", function (req, res) {
 
 // API Routes
 app.get("/api/notes", async function (req, res) {
-  // create a variable that is an await function. function calls on our database to send us it's contents
-  let parsedNotes = await fs.promises.readFile("./db/db.json", "utf8");
-  // responds with the contents of our parsed database
-  res.json(JSON.parse(parsedNotes));
+  // responds with our database
+  res.json(notes);
 });
 
-app.post("/api/notes", function (req, res) {
+app.post("/api/notes", async function (req, res) {
+  // Takes the body of the request and puts it in a variable
   const newNote = req.body;
+  // adds on a unique identifier to our new note object
   newNote.id = uuidv4();
-
-  // create a note from req.body
+  // pushes the newly made note object to our notes array
+  notes.push(newNote);
+  // Writes our updated notes list to file
+  const posted = await fs.promises.writeFile(
+    "./db/db.json",
+    JSON.stringify(notes)
+  );
+  // sends back "Ok" server code and the updated notes array.
+  res.status(200).json(posted);
 });
 
 app.delete("/api/notes:id", function (req, res) {
