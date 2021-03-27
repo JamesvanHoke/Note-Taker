@@ -1,7 +1,12 @@
+// NPM Modules
+const fs = require("fs")
 const express = require("express");
 const path = require("path");
 const app = express();
+const { v4: uuidv4 } = require('uuid');
 
+
+// Port
 const PORT = process.env.PORT || 8080;
 
 // Middleware Functions
@@ -21,11 +26,17 @@ app.get("/notes", function (req, res) {
 });
 
 // API Routes
-app.get("/api/notes", function(req, res){
-    // Retrieve all notes and res.json them back to the front end
+app.get("/api/notes", async function(req, res){
+// create a variable that is an await function. function calls on our database to send us it's contents
+  let parsedNotes= 
+  await fs.promises.readFile("./db/db.json", "utf8", function (err, data){})
+// responds with the contents of our parsed database
+  res.json(JSON.parse(parsedNotes))
 })
 
-app.post("/apir/notes", function(req, res){
+
+
+app.post("/api/notes", function(req, res){
     // create a note from req.body
 })
 
