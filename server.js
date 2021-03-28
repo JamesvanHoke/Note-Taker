@@ -55,10 +55,9 @@ app.post("/api/notes", async function (req, res) {
   res.status(200).json(posted);
 });
 
-
+// Deletes our notes based off the url sent with the req
 app.delete("/api/notes/:id", function (req, res) {
-  //delete a note based off id
-  // Sets ID = to request param
+  //Pulls the id off the request and saves it to a variable
   const { id } = req.params;
 
   // Filters our notes function for ID and excludes it from array and gives us back a copy
@@ -66,14 +65,11 @@ app.delete("/api/notes/:id", function (req, res) {
     return notes.id != id;
   });
   
-  // Stringifies our new array for saving to file
-  let newNote = JSON.stringify(filtered);
-
-  //overwrites our old array
+  //overwrites our old array with our filtered array.
   notes = filtered;
 
   // Writes our new array to file.
-  fs.writeFile(__dirname + "/./db/db.json", newNote, function (err) {
+  fs.writeFile(__dirname + "/./db/db.json", JSON.stringify(filtered), function (err) {
     if (err) throw err;
   });
   res.end();
